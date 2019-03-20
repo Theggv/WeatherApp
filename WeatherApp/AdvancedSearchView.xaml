@@ -1,0 +1,125 @@
+﻿<UserControl x:Class="WeatherApp.AdvancedSearchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WeatherApp"
+             xmlns:gif="http://wpfanimatedgif.codeplex.com"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="800"
+             MinHeight="100" MinWidth="100">
+    <Border Background="#DD606060" CornerRadius="10">
+        <Grid Margin="5" d:DataContext="{d:DesignInstance {x:Type local:AdvancedSearchVM}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="1" Grid.Row="1"
+                   Style="{StaticResource WhiteLabel}"
+                   FontSize="16"
+                   HorizontalAlignment="Left"
+                   Content="Страна"/>
+
+            <ComboBox Grid.Column="1" Grid.Row="2"
+                      ItemsSource="{Binding Countries}"
+                      SelectedItem="{Binding SelectedCountry}"
+                      DisplayMemberPath="DisplayName"
+                      />
+
+            <!-- Loading countries status -->
+            <Image Grid.Column="0" Grid.Row="2" Opacity="0.5"
+                   HorizontalAlignment="Right"
+                    Visibility="{Binding LoadingContriesVis}"
+                    gif:ImageBehavior.AnimatedSource="Resources/Icon/loading.gif"
+                    gif:ImageBehavior.AutoStart="True"
+                    gif:ImageBehavior.RepeatBehavior="0x"/>
+
+            <Label Grid.Column="1" Grid.Row="3"
+                   Style="{StaticResource WhiteLabel}"
+                   FontSize="16"
+                   HorizontalAlignment="Left"
+                   Content="Регион"/>
+            
+            <ComboBox Grid.Column="1" Grid.Row="4"
+                      ItemsSource="{Binding Regions}"
+                      SelectedItem="{Binding SelectedRegion}"
+                      DisplayMemberPath="DisplayName"/>
+
+            <!-- Loading regions status -->
+            <Image Grid.Column="0" Grid.Row="4" Opacity="0.5"
+                   HorizontalAlignment="Right"
+                    Visibility="{Binding LoadingRegionsVis}"
+                    gif:ImageBehavior.AnimatedSource="Resources/Icon/loading.gif"
+                    gif:ImageBehavior.AutoStart="True"
+                    gif:ImageBehavior.RepeatBehavior="0x"/>
+
+            <Label Grid.Column="1" Grid.Row="5"
+                   Style="{StaticResource WhiteLabel}"
+                   FontSize="16"
+                   HorizontalAlignment="Left"
+                   Content="Город"/>
+
+            <ComboBox Grid.Column="1" Grid.Row="6"
+                      ItemsSource="{Binding Cities}"
+                      SelectedItem="{Binding SelectedCity}"
+                      DisplayMemberPath="DisplayName"
+                      />
+
+            <!-- Loading cities status -->
+            <Image Grid.Column="0" Grid.Row="6" Opacity="0.5"
+                   HorizontalAlignment="Right"
+                    Visibility="{Binding LoadingCitiesVis}"
+                    gif:ImageBehavior.AnimatedSource="Resources/Icon/loading.gif"
+                    gif:ImageBehavior.AutoStart="True"
+                    gif:ImageBehavior.RepeatBehavior="0x"/>
+
+            <Label Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2"
+                   Style="{StaticResource WhiteLabel}"
+                   FontSize="16"
+                   HorizontalAlignment="Center"
+                   Content="Искать по координатам"/>
+
+            <CheckBox Grid.Column="3" Grid.Row="1"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Center"
+                      IsChecked="{Binding ByCoords}"/>
+
+            <Button Grid.Column="3" Grid.Row="7"
+                    Style="{StaticResource CustomButton}"
+                    Background="Transparent" Foreground="White"
+                    FontSize="16"
+                    Content="Поиск"
+                    Command="{Binding Search}"/>
+
+            <Label Grid.Column="2" Grid.Row="5"
+                   Style="{StaticResource WhiteLabel}"
+                   FontSize="16"
+                   HorizontalAlignment="Center"
+                   Content="Сортировка"/>
+
+            <ComboBox Grid.Column="3" Grid.Row="5"
+                      SelectedItem="{Binding SelectedItem}">
+                <ComboBoxItem x:Name="AlphAsc" Content="В алфавитном порядке (А-Я)"/>
+                <ComboBoxItem x:Name="AlphDesc" Content="В алфавитном порядке (Я-А)"/>
+                <ComboBoxItem x:Name="PopAsc" Content="По возрастанию численности"/>
+                <ComboBoxItem x:Name="PopDesc" Content="По убыванию численности"/>
+            </ComboBox>
+        </Grid>
+    </Border>
+</UserControl>

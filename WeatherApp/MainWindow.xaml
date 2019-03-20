@@ -1,0 +1,159 @@
+﻿<Window x:Class="WeatherApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WeatherApp"
+        mc:Ignorable="d"
+        Title="Weather app" Height="600" Width="1000"
+        MinHeight="600" MinWidth="1000" WindowStyle="None"
+        MouseDown="Window_MouseDown" ResizeMode="NoResize">
+    <Window.DataContext>
+        <local:MainVM/>
+    </Window.DataContext>
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:CommonVM}">
+            <local:CommonView/>
+        </DataTemplate>
+    </Window.Resources>
+    <Window.Background>
+        <ImageBrush ImageSource="{Binding BackgroundImage}" Stretch="UniformToFill"/>
+    </Window.Background>
+    <Grid x:Name="mainGrid" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Верх -->
+        <Grid Grid.Row="0" Background="#FF606060">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Back -->
+            <Button Grid.Column="0" Command="{Binding Back}"
+                    BorderThickness="1" BorderBrush="White" 
+                    Foreground="White" Margin="5"
+                    Style="{StaticResource CustomButton}">
+                <Button.Background>
+                    <ImageBrush ImageSource="Resources/Icon/back.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+
+            <!-- Back -->
+            <Button Grid.Column="1" Command="{Binding DownloadInfo}"
+                    BorderThickness="1" BorderBrush="White" 
+                    Foreground="White" Margin="5"
+                    Style="{StaticResource CustomButton}">
+                <Button.Background>
+                    <ImageBrush ImageSource="Resources/Icon/download.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+
+            <!-- Search -->
+            <local:SearchView Grid.Column="2" DataContext="{Binding SearchVM}"/>
+
+            <Button Grid.Column="3" Content="Выход" Command="{Binding Close}"
+                    BorderThickness="1" BorderBrush="White" 
+                    Background="Transparent" Foreground="White" Margin="5"
+                    FontSize="18" 
+                    Style="{StaticResource CustomButton}"/>
+
+        </Grid>
+
+        <Grid Grid.Row="1" Panel.ZIndex="1"
+              Visibility="{Binding IsShowDownload}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <local:GetResourceView Margin="5,0,5,5" Grid.Column="1"
+                                   DataContext="{Binding GetResourceVM}"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Panel.ZIndex="1"
+              Visibility="{Binding IsShowSearch}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Расширенный поиск -->
+            <local:AdvancedSearchView Margin="5,0,5,5"
+                Grid.Column="1" DataContext="{Binding AdvancedSearchVM}"/>
+            
+        </Grid>
+
+        <Grid Grid.Row="1" Panel.ZIndex="0">
+            <!-- Детальная погода -->
+            <Border Grid.Row="1" Style="{StaticResource BackgroundBorder}"
+                 Visibility="{Binding IsShowDetail}">
+                <local:ForecastView DataContext="{Binding DetailVM}"/>
+            </Border>
+
+            <!-- Погода по дням -->
+            <Border Grid.Row="1" Style="{StaticResource BackgroundBorder}"
+                Visibility="{Binding IsDetailSelected}">
+
+                <ListBox VerticalContentAlignment="Stretch" 
+                 HorizontalContentAlignment="Stretch"
+                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 Background="Transparent" BorderBrush="Transparent"
+                 ItemsSource="{Binding Common}"
+                 SelectedItem="{Binding SelectedCommon, Mode=TwoWay}"
+                 SelectionMode="Extended">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Margin="5" Rows="2" Columns="2"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                        <Border Background="{TemplateBinding Background}" 
+                                        BorderBrush="{TemplateBinding BorderBrush}" 
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                            Margin="5">
+                                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
+                                            <Border.Effect>
+                                                <DropShadowEffect Opacity="0.3" BlurRadius="10" ShadowDepth="7"/>
+                                            </Border.Effect>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Effect">
+                                                    <Setter.Value>
+                                                        <DropShadowEffect Opacity="0.4" BlurRadius="15" ShadowDepth="7"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

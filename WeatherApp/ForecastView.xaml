@@ -1,0 +1,192 @@
+﻿<UserControl x:Class="WeatherApp.ForecastView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WeatherApp"
+             mc:Ignorable="d"
+             d:DesignHeight="500" d:DesignWidth="800"
+             MinHeight="350" MinWidth="450">
+    <UserControl.Resources>
+        <local:LocationConverter x:Key="LocationConverter"/>
+        <local:WindSpeedConverter x:Key="WindSpeedConverter"/>
+        <local:RoundConverter x:Key="RoundConverter"/>
+        <DataTemplate DataType="{x:Type local:DailyVM}">
+            <local:DailyView/>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Border>
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" Opacity="0.3" ShadowDepth="8"/>
+        </Border.Effect>
+        
+        <Grid d:DataContext="{d:DesignInstance {x:Type local:ForecastVM}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="65"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="9*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Назад 
+                <Button Command="{Binding Back}" Margin="5" 
+                    BorderThickness="2" BorderBrush="White">
+                    <Button.Background>
+                        <ImageBrush ImageSource="Resources/Icon/back.png" Stretch="Uniform"/>
+                    </Button.Background>
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}"
+                                            CornerRadius="5" 
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                            <ContentPresenter Margin="{TemplateBinding Padding}" 
+                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect Opacity="0.5" BlurRadius="20" ShadowDepth="5"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsFocused" Value="True">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect Opacity="0.5" BlurRadius="20" ShadowDepth="5"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+-->
+                <!-- Город, страна -->
+                <Label FontSize="14" Grid.Column="1" 
+                   Visibility="{Binding ElementVis}"
+                   Style="{StaticResource WhiteLabel}"
+                   HorizontalAlignment="Left"
+                   Margin="10,0,0,0"
+                   Content="{Binding City, Converter={StaticResource LocationConverter}}"/>
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="8*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Температура -->
+                <Grid Visibility="{Binding ElementVis}" 
+                    Grid.RowSpan="2" Grid.Column="1">
+                    <local:TemperatureView DataContext="{Binding Temperature, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+
+                <!-- Состояние погоды -->
+                <Grid Grid.Column="2" Grid.RowSpan="2" Visibility="{Binding ElementVis}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="3*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Название погоды -->
+                    <Label FontSize="16" Style="{StaticResource WhiteLabel}"
+                   HorizontalAlignment="Left"
+                   Content="{Binding WeatherName, NotifyOnSourceUpdated=True}"/>
+
+                    <!-- Скорость ветра -->
+                    <Label FontSize="14" Style="{StaticResource WhiteLabel}"
+                   HorizontalAlignment="Left" Grid.Row="1"
+                   Content="{Binding CurrentForecast.Wind.Speed, Converter={StaticResource WindSpeedConverter},
+                            UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </Grid>
+
+            <!-- Погода по дням -->
+            <Border Grid.Row="2" Style="{StaticResource BackgroundBorder}">
+                <ListBox VerticalContentAlignment="Stretch" 
+                         HorizontalContentAlignment="Stretch"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                         Background="Transparent" BorderBrush="Transparent"
+                
+                         Visibility="{Binding ElementVis}"
+                         ItemsSource="{Binding DailyForecasts, UpdateSourceTrigger=PropertyChanged}"
+                         SelectedItem="{Binding SelectedForecast, Mode=OneWayToSource}">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                        <Border Background="{TemplateBinding Background}" 
+                                        BorderBrush="{TemplateBinding BorderBrush}" 
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                            Margin="5" CornerRadius="5">
+                                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
+                                            <Border.Effect>
+                                                <DropShadowEffect Opacity="0.3" BlurRadius="10" ShadowDepth="7"/>
+                                            </Border.Effect>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="BorderBrush" Value="White"/>
+                                                <Setter Property="BorderThickness" Value="1"/>
+                                                <Setter Property="Effect">
+                                                    <Setter.Value>
+                                                        <DropShadowEffect Opacity="0.4" BlurRadius="25" ShadowDepth="5"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="BorderBrush" Value="White"/>
+                                                <Setter Property="BorderThickness" Value="1"/>
+                                                <Setter Property="Effect">
+                                                    <Setter.Value>
+                                                        <DropShadowEffect Opacity="0.4" BlurRadius="25" ShadowDepth="5"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Border>
+
+            <!-- Детальная погода -->
+            <local:DetailView Grid.Row="3" Visibility="{Binding DetailVis}"
+                          Margin="10"
+                          DataContext="{Binding DetailViewModel, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <local:LoadingStatusView Grid.RowSpan="4" 
+                                     DataContext="{Binding LoadingStatusVM}"/>
+        </Grid>
+    </Border>
+</UserControl>

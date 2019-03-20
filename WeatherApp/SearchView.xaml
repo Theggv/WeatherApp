@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="WeatherApp.SearchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:gif="http://wpfanimatedgif.codeplex.com"
+             xmlns:local="clr-namespace:WeatherApp"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="500">
+    <Grid d:DataContext="{d:DesignInstance {x:Type local:SearchVM}}">
+        <Border Grid.Column="2" CornerRadius="10"
+                    Background="{Binding Background}" Margin="5">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Style="{StaticResource CustomButton}"
+                        Command="{Binding Menu}"
+                        Margin="2">
+                    <Button.Background>
+                        <ImageBrush ImageSource="{Binding MenuImage}"/>
+                    </Button.Background>
+                </Button>
+
+                <Rectangle Grid.Column="1"
+                           Width="2" HorizontalAlignment="Left"
+                           Fill="#CC666666"/>
+                
+                <!-- Query -->
+                <TextBox Grid.Column="1" Margin="10,0,10,0"
+                         Background="Transparent" BorderBrush="Transparent"
+                         BorderThickness="0" 
+                         CaretBrush="#FF666666"
+                         SelectionBrush="#AA666666" 
+                         Foreground="{Binding Foreground}" FontSize="16"
+                         VerticalAlignment="Center"
+                          Text="{Binding Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         GotFocus="TextBox_GotFocus"
+                         LostFocus="TextBox_LostFocus"/>
+
+                <Rectangle Grid.Column="2"
+                    Width="2" HorizontalAlignment="Right"
+                           Fill="#CC666666"/>
+
+                <!-- Loading status -->
+                <Image Grid.Column="2" Opacity="0.5"
+                       Visibility="{Binding LoadingVis}"
+                       gif:ImageBehavior.AnimatedSource="Resources/Icon/loading.gif"
+                       gif:ImageBehavior.AutoStart="True"
+                       gif:ImageBehavior.RepeatBehavior="0x"/>
+
+                <!-- Search -->
+                <Button Grid.Column="3" Style="{StaticResource CustomButton}"
+                        Command="{Binding Search}"
+                        Margin="2">
+                    <Button.Background>
+                        <ImageBrush ImageSource="{Binding SearchImage}"/>
+                    </Button.Background>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
