@@ -34,21 +34,21 @@
                    Content="{Binding DayName}" Style="{StaticResource WhiteLabel}"/>
 
             <Image Grid.Row="1" Margin="10,4,0,4" Stretch="Uniform"
-                   Source="Resources/Icon/heat.png"/>
+                   Source="/Resources/Icon/heat.png"/>
 
             <Label Grid.Row="1" Grid.Column="1" FontSize="14"
                    HorizontalAlignment="Left"
                    Content="Температура (*C)" Style="{StaticResource WhiteLabel}"/>
 
             <Image Grid.Row="2" Margin="10,4,0,4" Stretch="Uniform"
-                   Source="Resources/Icon/wind.png"/>
+                   Source="/Resources/Icon/wind.png"/>
             
             <Label Grid.Row="2" Grid.Column="1" FontSize="14"
                    HorizontalAlignment="Left"
                    Content="Ветер (км/ч)" Style="{StaticResource WhiteLabel}"/>
 
             <Image Grid.Row="3" Margin="10,4,0,4" Stretch="Uniform"
-                   Source="Resources/Icon/water.png"/>
+                   Source="/Resources/Icon/water.png"/>
             
             <Label Grid.Row="3" Grid.Column="1" FontSize="14"
                    HorizontalAlignment="Left"

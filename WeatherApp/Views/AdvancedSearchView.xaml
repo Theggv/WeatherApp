@@ -46,7 +46,7 @@
             <Image Grid.Column="0" Grid.Row="2" Opacity="0.5"
                    HorizontalAlignment="Right"
                     Visibility="{Binding LoadingContriesVis}"
-                    gif:ImageBehavior.AnimatedSource="Resources/Icon/loading.gif"
+                    gif:ImageBehavior.AnimatedSource="/Resources/Icon/loading.gif"
                     gif:ImageBehavior.AutoStart="True"
                     gif:ImageBehavior.RepeatBehavior="0x"/>
 
@@ -65,7 +65,7 @@
             <Image Grid.Column="0" Grid.Row="4" Opacity="0.5"
                    HorizontalAlignment="Right"
                     Visibility="{Binding LoadingRegionsVis}"
-                    gif:ImageBehavior.AnimatedSource="Resources/Icon/loading.gif"
+                    gif:ImageBehavior.AnimatedSource="/Resources/Icon/loading.gif"
                     gif:ImageBehavior.AutoStart="True"
                     gif:ImageBehavior.RepeatBehavior="0x"/>
 
@@ -85,7 +85,7 @@
             <Image Grid.Column="0" Grid.Row="6" Opacity="0.5"
                    HorizontalAlignment="Right"
                     Visibility="{Binding LoadingCitiesVis}"
-                    gif:ImageBehavior.AnimatedSource="Resources/Icon/loading.gif"
+                    gif:ImageBehavior.AnimatedSource="/Resources/Icon/loading.gif"
                     gif:ImageBehavior.AutoStart="True"
                     gif:ImageBehavior.RepeatBehavior="0x"/>
 

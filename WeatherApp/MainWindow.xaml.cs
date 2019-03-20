@@ -83,40 +83,7 @@ namespace WeatherApp
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
-                this.DragMove();
+                DragMove();
         }
-    }
-
-    public class Country: IEquatable<Country>
-    {
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("code")]
-        public string Code { get; set; }
-
-        public bool Equals(Country other)
-        {
-            if (other == null)
-                return false;
-
-            return Code == other.Code;
-        }
-
-        public override bool Equals(object obj) => Equals(obj as Country);
-
-        public override int GetHashCode() => (Name, Code).GetHashCode();
-    }
-
-    public class CityJson
-    {
-        [JsonProperty("id")]
-        public int Id { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("country")]
-        public string Code { get; set; }
     }
 }

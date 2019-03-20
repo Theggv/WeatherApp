@@ -69,60 +69,61 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AdvancedSearchView.xaml.cs">
+    <Compile Include="Views\AdvancedSearchView.xaml.cs">
       <DependentUpon>AdvancedSearchView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AdvancedSearchVM.cs" />
+    <Compile Include="ViewModels\AdvancedSearchVM.cs" />
     <Compile Include="ApiQuery.cs" />
     <Compile Include="City.cs" />
-    <Compile Include="CommonView.xaml.cs">
+    <Compile Include="Views\CommonView.xaml.cs">
       <DependentUpon>CommonView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CommonVM.cs" />
+    <Compile Include="ViewModels\CommonVM.cs" />
     <Compile Include="ConnectionInfo.cs" />
-    <Compile Include="DetailView.xaml.cs">
+    <Compile Include="Country.cs" />
+    <Compile Include="Views\DetailView.xaml.cs">
       <DependentUpon>DetailView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DetailVM.cs" />
-    <Compile Include="GetResourceView.xaml.cs">
+    <Compile Include="ViewModels\DetailVM.cs" />
+    <Compile Include="Views\GetResourceView.xaml.cs">
       <DependentUpon>GetResourceView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GetResourceVM.cs" />
-    <Compile Include="HourView.xaml.cs">
+    <Compile Include="ViewModels\GetResourceVM.cs" />
+    <Compile Include="Views\HourView.xaml.cs">
       <DependentUpon>HourView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="HourVM.cs" />
+    <Compile Include="ViewModels\HourVM.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="Forecast.cs" />
-    <Compile Include="DailyVM.cs" />
-    <Compile Include="DailyView.xaml.cs">
+    <Compile Include="ViewModels\DailyVM.cs" />
+    <Compile Include="Views\DailyView.xaml.cs">
       <DependentUpon>DailyView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ForecastView.xaml.cs">
+    <Compile Include="Views\ForecastView.xaml.cs">
       <DependentUpon>ForecastView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ForecastVM.cs" />
+    <Compile Include="ViewModels\ForecastVM.cs" />
     <Compile Include="JSON.cs" />
-    <Compile Include="LoadingStatusView.xaml.cs">
+    <Compile Include="Views\LoadingStatusView.xaml.cs">
       <DependentUpon>LoadingStatusView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LoadingStatusVM.cs" />
+    <Compile Include="ViewModels\LoadingStatusVM.cs" />
     <Compile Include="Location.cs" />
-    <Compile Include="MainVM.cs" />
-    <Compile Include="SearchView.xaml.cs">
+    <Compile Include="ViewModels\MainVM.cs" />
+    <Compile Include="Views\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SearchVM.cs" />
-    <Compile Include="TemperatureView.xaml.cs">
+    <Compile Include="ViewModels\SearchVM.cs" />
+    <Compile Include="Views\TemperatureView.xaml.cs">
       <DependentUpon>TemperatureView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TemperatureVM.cs" />
+    <Compile Include="ViewModels\TemperatureVM.cs" />
     <Compile Include="WeatherData.cs" />
-    <Page Include="AdvancedSearchView.xaml">
+    <Page Include="Views\AdvancedSearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CommonView.xaml">
+    <Page Include="Views\CommonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -130,27 +131,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DailyView.xaml">
+    <Page Include="Views\DailyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DetailView.xaml">
+    <Page Include="Views\DetailView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ForecastView.xaml">
+    <Page Include="Views\ForecastView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GetResourceView.xaml">
+    <Page Include="Views\GetResourceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="HourView.xaml">
+    <Page Include="Views\HourView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="LoadingStatusView.xaml">
+    <Page Include="Views\LoadingStatusView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -166,11 +167,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SearchView.xaml">
+    <Page Include="Views\SearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TemperatureView.xaml">
+    <Page Include="Views\TemperatureView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -193,7 +194,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

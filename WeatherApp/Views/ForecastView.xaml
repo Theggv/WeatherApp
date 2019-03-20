@@ -35,48 +35,6 @@
                     <ColumnDefinition Width="9*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Назад 
-                <Button Command="{Binding Back}" Margin="5" 
-                    BorderThickness="2" BorderBrush="White">
-                    <Button.Background>
-                        <ImageBrush ImageSource="Resources/Icon/back.png" Stretch="Uniform"/>
-                    </Button.Background>
-                    <Button.Style>
-                        <Style TargetType="{x:Type Button}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border Background="{TemplateBinding Background}"
-                                            CornerRadius="5" 
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                            <ContentPresenter Margin="{TemplateBinding Padding}" 
-                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Effect">
-                                        <Setter.Value>
-                                            <DropShadowEffect Opacity="0.5" BlurRadius="20" ShadowDepth="5"/>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Trigger>
-                                <Trigger Property="IsFocused" Value="True">
-                                    <Setter Property="Effect">
-                                        <Setter.Value>
-                                            <DropShadowEffect Opacity="0.5" BlurRadius="20" ShadowDepth="5"/>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
--->
                 <!-- Город, страна -->
                 <Label FontSize="14" Grid.Column="1" 
                    Visibility="{Binding ElementVis}"

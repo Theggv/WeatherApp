@@ -24,7 +24,7 @@
         <Image Grid.Column="1" MaxHeight="100" MaxWidth="100" Opacity="0.7"
                HorizontalAlignment="Left"
                Visibility="{Binding LoadingVis}"
-               gif:ImageBehavior.AnimatedSource="Resources/Icon/loading.gif"
+               gif:ImageBehavior.AnimatedSource="/Resources/Icon/loading.gif"
                gif:ImageBehavior.AutoStart="True"
                gif:ImageBehavior.RepeatBehavior="0x"/>
 
@@ -32,6 +32,6 @@
         <Image Grid.Column="1" MaxHeight="50" MaxWidth="50" Opacity="0.7"
                HorizontalAlignment="Left" Margin="25"
                Visibility="{Binding ErrorVis}"
-               Source="Resources/Icon/error.png"/>
+               Source="/Resources/Icon/error.png"/>
     </Grid>
 </UserControl>

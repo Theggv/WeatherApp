@@ -50,7 +50,7 @@
                 <!-- Loading status -->
                 <Image Grid.Column="2" Opacity="0.5"
                        Visibility="{Binding LoadingVis}"
-                       gif:ImageBehavior.AnimatedSource="Resources/Icon/loading.gif"
+                       gif:ImageBehavior.AnimatedSource="/Resources/Icon/loading.gif"
                        gif:ImageBehavior.AutoStart="True"
                        gif:ImageBehavior.RepeatBehavior="0x"/>
 
