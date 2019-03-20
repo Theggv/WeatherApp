@@ -26,57 +26,6 @@ namespace WeatherApp
         public MainWindow()
         {
             InitializeComponent();
-            /*
-            Task.Run(() => {
-                string json = new StreamReader("city.list.json").ReadToEnd();
-
-                var obj = JsonConvert.DeserializeObject<List<CityJson>>(json);
-
-                string connectionString = $"Data Source=DESKTOP-QBSNIUJ;Initial Catalog=weatherdb;Integrated Security=True";
-
-                var connection = new SqlConnection(connectionString);
-
-                var command = new SqlCommand
-                {
-                    Connection = connection
-                };
-
-                int counter = 0;
-
-                connection.Open();
-
-                string query = "";
-
-                command.CommandText = "DELETE FROM [dbo].city;";
-                command.ExecuteNonQuery();
-
-                foreach (var c in obj)
-                {
-                    if (counter % 100 == 0)
-                        query = "INSERT INTO [city] ([external_id], [name], [country_id]) VALUES ";
-
-                    query += $"({c.Id}, '{c.Name.Replace('\'', ' ')}', '{c.Code}'),";
-
-                    counter++;
-
-                    if (counter % 100 == 0 || counter == obj.Count)
-                    {
-                        command.CommandText = query.Remove(query.Length - 1);
-
-                        try
-                        {
-                            command.ExecuteNonQuery();
-                        }
-                        catch (Exception e)
-                        {
-                            MessageBox.Show(e.Message + "\n" + command.CommandText);
-                        }
-                    }
-                }
-
-                connection.Close();
-            });
-            */
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)

@@ -32,7 +32,7 @@
                 </Setter>
             </Style>
             <Style x:Key="BackgroundBorder" TargetType="{x:Type Border}">
-                <Setter Property="Background" Value="#20C8C8C8"/>
+                <Setter Property="Background" Value="#88606060"/>
                 <Setter Property="CornerRadius" Value="10"/>
                 <Setter Property="Margin" Value="3"/>
             </Style>

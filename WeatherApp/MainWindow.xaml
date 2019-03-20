@@ -17,7 +17,7 @@
         </DataTemplate>
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="{Binding BackgroundImage}" Stretch="UniformToFill"/>
+        <ImageBrush ImageSource="{Binding BackgroundImage}" Stretch="UniformToFill" Opacity="0.9"/>
     </Window.Background>
     <Grid x:Name="mainGrid" Background="Transparent">
         <Grid.RowDefinitions>
