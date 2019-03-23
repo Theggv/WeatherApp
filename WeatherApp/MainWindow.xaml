@@ -129,9 +129,10 @@
                         DataContext="{Binding CurrentBriefly}"/>
                 </Border>
 
-                <Label Grid.Row="2" FontSize="14"
+                <Label Grid.Row="2" FontSize="16" Margin="10,0,0,0"
+                       HorizontalAlignment="Left"
                        Style="{StaticResource WhiteLabel}"
-                       Content="Избранные места"/>
+                       Content="Избранные места:"/>
 
                 <!-- Погода по дням -->
                 <Border Grid.Row="3" Margin="5">
@@ -226,8 +227,7 @@
                 </Grid>
 
                 <!-- Детальная погода -->
-                <Border
-                    Style="{StaticResource BackgroundBorder}"
+                <Border Background="#20606060"
                     Visibility="{Binding IsShowDetail}">
                     <local:ForecastView DataContext="{Binding DetailVM}"/>
                 </Border>

@@ -27,6 +27,37 @@ namespace WeatherApp
 
         public City City => model.GetCity();
 
+        public string DisplayLocation
+        {
+            get
+            {
+                string str = City?.Name;
+
+                if (str == null)
+                    return null;
+
+                string region = model.GetRegion();
+                
+                if (region != null)
+                    str += $", {region}";
+
+                return str;
+            }
+        }
+
+        public string DisplayCountry
+        {
+            get
+            {
+                string country = model.GetCountry();
+
+                if (country != null)
+                    return $"{country}";
+                else
+                    return $"{City?.Country}";
+            }
+        }
+
         public ObservableCollection<DailyVM> DailyForecasts => model.GetDailyForecasts();
 
         public Forecast CurrentForecast => model.CurrentForecast;
@@ -92,7 +123,8 @@ namespace WeatherApp
                     {
                         RaisePropertyChanged(nameof(WeatherName));
                         RaisePropertyChanged(nameof(DetailViewModel));
-                        RaisePropertyChanged(nameof(City));
+                        RaisePropertyChanged(nameof(DisplayLocation));
+                        RaisePropertyChanged(nameof(DisplayCountry));
                         RaisePropertyChanged(nameof(DailyForecasts));
                         RaisePropertyChanged(nameof(CurrentForecast));
                         RaisePropertyChanged(nameof(Temperature));
@@ -359,6 +391,70 @@ namespace WeatherApp
 
             CurrentForecast = GetCurrentForecast();
             RaisePropertyChanged("LoadingCompleted");
+        }
+
+        public string GetRegion()
+        {
+            if (_location?.AdminCode1 == null || _location?.CountryCode == null)
+                return null;
+
+            using (SqlConnection conn = new SqlConnection(ConnectionInfo.ConnString))
+            {
+                conn.Open();
+
+                SqlCommand command = new SqlCommand
+                {
+                    Connection = conn,
+                    CommandText = $"SELECT MAX([name]), MAX([alternatename]) FROM[location] " +
+                                    $"WHERE [admin1_code] = '{_location.AdminCode1}' and [feature_code] = 'ADM1' AND [country_code] = '{_location.CountryCode}'" +
+                                    $"group by name;"
+                };
+
+                using(SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (!reader.HasRows)
+                        return null;
+
+                    object[] values = new object[reader.FieldCount];
+
+                    reader.Read();
+                    reader.GetValues(values);
+
+                    return reader[1].ToString() != "" ? reader[1].ToString() : reader[0].ToString();
+                }
+            }
+        }
+
+        public string GetCountry()
+        {
+            if (_location?.CountryCode == null)
+                return null;
+
+            using (SqlConnection conn = new SqlConnection(ConnectionInfo.ConnString))
+            {
+                conn.Open();
+
+                SqlCommand command = new SqlCommand
+                {
+                    Connection = conn,
+                    CommandText = $"SELECT MIN([alternatename]) FROM[location] " +
+                                    $"WHERE [feature_code] = 'PCLI' AND [country_code] = '{_location.CountryCode}'" +
+                                    $"group by name;"
+                };
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (!reader.HasRows)
+                        return null;
+
+                    object[] values = new object[reader.FieldCount];
+
+                    reader.Read();
+                    reader.GetValues(values);
+
+                    return reader[0].ToString();
+                }
+            }
         }
 
         public City GetCity()

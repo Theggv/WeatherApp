@@ -14,8 +14,6 @@ namespace WeatherApp
     public class SearchVM: BindableBase
     {
         private const string defaultText = "Введите название города";
-        private string query = "";
-
         private bool isLoading = false;
 
         private MainVM mainVM;
@@ -23,11 +21,8 @@ namespace WeatherApp
 
         public bool IsShowDetailSearch { get; set; } = false;
 
-        public string Query
-        {
-            get => query;
-            set => query = value.Trim();
-        }
+
+        public string Query { get; set; } = "";
 
 
         public AdvancedSearchVM AdvancedSearchVM { get; set; }
@@ -118,14 +113,16 @@ namespace WeatherApp
                 {
                     // city selected
 
-                    RaisePropertyChanged("CitySelected");
+                    RaisePropertyChanged("AdvancedSearchSelected");
                 }
                 else
                 {
                     if (!IsValidQuery())
                         return;
-                    
+
                     // search by query
+
+                    RaisePropertyChanged("QueryValid");
                 }
             });
 
@@ -141,7 +138,7 @@ namespace WeatherApp
 
         private bool IsValidQuery()
         {
-            if (query == "" || query == defaultText)
+            if (Query == "" || Query == defaultText)
                 return false;
 
             return true;
@@ -150,8 +147,6 @@ namespace WeatherApp
 
     public class SearchModel
     {
-        private City city;
-
         public SearchModel()
         {
 

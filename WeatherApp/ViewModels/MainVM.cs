@@ -133,9 +133,18 @@ namespace WeatherApp
                     RaisePropertyChanged(nameof(IsShowSearch));
                 }
 
-                if (e.PropertyName == "CitySelected")
+                if (e.PropertyName == "AdvancedSearchSelected")
                 {
                     CurrentBriefly = new BrieflyVM(this, SearchVM.AdvancedSearchVM.SelectedCity);
+
+                    RaisePropertyChanged("CurrentBriefly");
+                }
+                if (e.PropertyName == "QueryValid")
+                {
+                    CurrentBriefly = new BrieflyVM(this, new Location
+                    {
+                        Name = SearchVM.Query.Trim()
+                    });
 
                     RaisePropertyChanged("CurrentBriefly");
                 }
@@ -144,7 +153,7 @@ namespace WeatherApp
             Close = new DelegateCommand(() =>
             {
                 var settings = new UserSettings();
-                settings.SaveSettings(FavoriteList, FavoriteList?.First());
+                settings.SaveSettings(FavoriteList, FavoriteList?.FirstOrDefault());
 
                 Environment.Exit(0);
             });
@@ -225,7 +234,7 @@ namespace WeatherApp
 
             model.PropertyChanged += (s, e) =>
             {
-                if(e.PropertyName == "UserLocation")
+                if (e.PropertyName == "UserLocation")
                 {
                     CurrentBriefly = new BrieflyVM(this, new Location
                     {
@@ -236,10 +245,11 @@ namespace WeatherApp
                 }
                 if (e.PropertyName == "SettingsLoaded")
                 {
-                    CurrentBriefly = new BrieflyVM(this, model.DefaultLocation);
+                    if(model.DefaultLocation != null)
+                        CurrentBriefly = new BrieflyVM(this, model.DefaultLocation);
 
                     FavoriteList = new ObservableCollection<BrieflyVM>(model.FavoriteList
-                        .Select(item => new BrieflyVM(this, item)));
+                        .Select(item => new BrieflyVM(this, item)).AsParallel());
                 }
             };
         }
@@ -260,8 +270,11 @@ namespace WeatherApp
             {
                 var settings = UserSettings.LoadSettings();
 
+                if (settings == null)
+                    return;
+
                 FavoriteList = settings.Locations.Select(item => item.ToLocation()).ToList();
-                DefaultLocation = settings.DefaultLocation.ToLocation();
+                DefaultLocation = settings.DefaultLocation?.ToLocation();
 
                 RaisePropertyChanged("SettingsLoaded");
             });

@@ -30,8 +30,10 @@ namespace WeatherApp
                 return $"{url}?appid={apiKey}&units={unit}&{xml}&lat={loc.Latitude}&lon={loc.Longtitude}";
             else if(loc.ForecastId != 0)
                 return $"{url}?appid={apiKey}&units={unit}&{xml}&id={loc.ForecastId}";
-            else
+            else if(loc.CountryCode != null)
                 return $"{url}?appid={apiKey}&units={unit}&{xml}&q={loc.Name.Replace("'", "")},{loc.CountryCode}";
+            else
+                return $"{url}?appid={apiKey}&units={unit}&{xml}&q={loc.Name.Replace("'", "")}";
         }
     }
 }

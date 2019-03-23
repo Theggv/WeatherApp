@@ -16,7 +16,7 @@
         </Grid.ColumnDefinitions>
         
         <!-- Message -->
-        <TextBlock Text="{Binding Message}" FontSize="30"
+        <TextBlock Text="{Binding Message}" FontSize="24"
                HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Center"
                Style="{StaticResource WhiteTextBlock}" Grid.Column="0"/>
 

@@ -53,6 +53,9 @@ namespace WeatherApp
 
         public Location Location { get; set; }
 
+
+        public BitmapImage BackgroundImage => ForecastModel?.GetImage();
+
         public BitmapImage Icon => hourModel?.GetImage();
 
 
@@ -117,6 +120,7 @@ namespace WeatherApp
                     RaisePropertyChanged(nameof(City));
                     RaisePropertyChanged(nameof(Temperature));
                     RaisePropertyChanged(nameof(Icon));
+                    RaisePropertyChanged(nameof(BackgroundImage));
 
                     LoadingStatusVM.ResetStatus.Execute();
 
@@ -142,7 +146,7 @@ namespace WeatherApp
         {
             var temp = ForecastModel?.GetTemperature()?.Temp;
             if (temp != null)
-                return $"{Math.Floor(temp.Value)} C";
+                return $"{Math.Round(temp.Value)} C";
 
             return null;
         }

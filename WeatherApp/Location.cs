@@ -50,7 +50,7 @@ modification date : date of last modification in yyyy-MM-dd format
 
         public bool IsSearchByCoords { get; set; } = false;
 
-        public string DisplayName => AlternativeName != "" ? AlternativeName : Name;
+        public string DisplayName => (AlternativeName != null && AlternativeName != "") ? AlternativeName : Name;
 
         public Location() { }
 

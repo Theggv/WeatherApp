@@ -14,6 +14,10 @@
     </UserControl.Resources>
 
     <Border CornerRadius="5" Visibility="{Binding NotDraw}">
+        <Border.Background>
+            <ImageBrush ImageSource="{Binding BackgroundImage}"
+                        Stretch="None" Opacity="0.6"/>
+        </Border.Background>
         <Grid d:DataContext="{d:DesignInstance {x:Type local:BrieflyVM}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>

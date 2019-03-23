@@ -19,6 +19,10 @@ namespace WeatherApp
         private Location selectedRegion;
         private Location selectedCity;
 
+        private ComboBoxItem selectedItem;
+
+        private List<Location> cities;
+
 
         public bool ByCoords { get; set; } = false;
 
@@ -34,7 +38,16 @@ namespace WeatherApp
 
         public List<Location> Regions => model.Regions;
 
-        public List<Location> Cities => model.Cities.Take(1000).ToList();
+        public List<Location> Cities
+        {
+            get => cities?.Take(1000).ToList();
+            set
+            {
+                cities = value;
+
+                RaisePropertyChanged(nameof(Cities));
+            }
+        }
 
 
         public Location SelectedCountry
@@ -81,8 +94,35 @@ namespace WeatherApp
 
         public ComboBoxItem SelectedItem
         {
-            get;
-            set;
+            get => selectedItem;
+            set
+            {
+                selectedItem = value;
+
+                switch (selectedItem.Name)
+                {
+                    case "AlphAsc":
+                        Cities = model.Cities?
+                            .OrderBy(item => item.DisplayName ?? item.Name)
+                            .ToList();
+                        break;
+                    case "AlphDesc":
+                        Cities = model.Cities?
+                            .OrderByDescending(item => item.DisplayName ?? item.Name)
+                            .ToList();
+                        break;
+                    case "PopAsc":
+                        Cities = model.Cities?
+                            .OrderBy(item => item.Population)
+                            .ToList();
+                        break;
+                    case "PopDesc":
+                        Cities = model.Cities?
+                            .OrderByDescending(item => item.Population)
+                            .ToList();
+                        break;
+                }
+            }
         }
 
         public DelegateCommand Search { get; set; }
@@ -118,13 +158,14 @@ namespace WeatherApp
                 }
                 if (e.PropertyName == "Cities")
                 {
+                    Cities = model.Cities.ToList();
+
                     if (Cities.Count == 0)
                         LoadingCitiesVis = Visibility.Visible;
                     else
                         LoadingCitiesVis = Visibility.Collapsed;
 
                     RaisePropertyChanged(nameof(LoadingCitiesVis));
-                    RaisePropertyChanged(nameof(Cities));
                 }
             };
 

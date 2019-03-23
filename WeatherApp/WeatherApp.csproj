@@ -67,7 +67,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BrieflyVM.cs" />
+    <Compile Include="ViewModels\BrieflyVM.cs" />
     <Compile Include="UserSettings.cs" />
     <Compile Include="Views\BrieflyView.xaml.cs">
       <DependentUpon>BrieflyView.xaml</DependentUpon>

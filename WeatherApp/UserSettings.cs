@@ -41,7 +41,9 @@ namespace WeatherApp
         public void SaveSettings(IEnumerable<BrieflyVM> brieflies, BrieflyVM loadOnStart = null)
         {
             Locations = brieflies.Select(item => new LocationInfo(item.Location)).ToList();
-            DefaultLocation = new LocationInfo(loadOnStart.Location);
+
+            if(loadOnStart != null)
+                DefaultLocation = new LocationInfo(loadOnStart.Location);
 
             FileStream fs = new FileStream("settings.xml", FileMode.Create);
 
@@ -69,6 +71,10 @@ namespace WeatherApp
 
             public bool IsSearchByCoords { get; set; }
 
+            public string AdminCode1 { get; set; }
+
+            public string CountryCode { get; set; }
+
 
             public LocationInfo() { }
 
@@ -82,6 +88,8 @@ namespace WeatherApp
                 Latitude = loc.Latitude;
                 Longtitude = loc.Longtitude;
                 IsSearchByCoords = loc.IsSearchByCoords;
+                AdminCode1 = loc.AdminCode1;
+                CountryCode = loc.CountryCode;
             }
 
             public Location ToLocation()
@@ -94,7 +102,9 @@ namespace WeatherApp
                     AlternativeName = AlternativeName,
                     Latitude = Latitude,
                     Longtitude = Longtitude,
-                    IsSearchByCoords = IsSearchByCoords
+                    IsSearchByCoords = IsSearchByCoords,
+                    AdminCode1 = AdminCode1,
+                    CountryCode = CountryCode
                 };
             }
         }
