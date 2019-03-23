@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:WeatherApp">
+    <SolidColorBrush x:Key="TopBarColor">#FF36393F</SolidColorBrush>
+    <SolidColorBrush x:Key="SideBarColor">#FF2F3136</SolidColorBrush>
+
+    <SolidColorBrush x:Key="BackgroundColor">#FF484C52</SolidColorBrush>
+
+    <SolidColorBrush x:Key="DeactiveTextColor">#FF7F827E</SolidColorBrush>
+    <SolidColorBrush x:Key="SearchBarColor">#FF484C52</SolidColorBrush>
+    <SolidColorBrush x:Key="SearchSplitColor">#FF5B5E64</SolidColorBrush>
+
+    <SolidColorBrush x:Key="ActiveButtonColor">#80484C52</SolidColorBrush>
+
+    <SolidColorBrush x:Key="BackgroundBorderColor">#50484C52</SolidColorBrush>
+
+    <SolidColorBrush x:Key="DetailForecastBackgroundColor">#28484C52</SolidColorBrush>
+
+
+    <SolidColorBrush x:Key="LoadingBackgroundColor">#CC36393F</SolidColorBrush>
+
+    <SolidColorBrush x:Key="PopupBarColor">#EA18191C</SolidColorBrush>
+    <SolidColorBrush x:Key="FontPopupColor">#FFAAAAAA</SolidColorBrush>
+</ResourceDictionary>

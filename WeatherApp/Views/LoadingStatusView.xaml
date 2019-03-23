@@ -6,32 +6,36 @@
              xmlns:local="clr-namespace:WeatherApp"
              xmlns:gif="http://wpfanimatedgif.codeplex.com"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Opacity="1" Background="#88888888"
+             d:DesignHeight="100" d:DesignWidth="300">
+    <Grid Opacity="1" Background="{DynamicResource LoadingBackgroundColor}"
           d:DataContext="{d:DesignInstance {x:Type local:LoadingStatusVM}}"
           Visibility="{Binding Visibility}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="9*"/>
+            <ColumnDefinition Width="50"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
         <!-- Message -->
-        <TextBlock Text="{Binding Message}" FontSize="24"
-               HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Center"
-               Style="{StaticResource WhiteTextBlock}" Grid.Column="0"/>
+        <TextBlock 
+            Text="{Binding Message}" FontSize="16" Margin="10,0,0,0"
+            HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Center"
+            Style="{StaticResource PopupTextBlock}" Grid.Column="0"/>
 
         <!-- Loading status -->
-        <Image Grid.Column="1" MaxHeight="100" MaxWidth="100" Opacity="0.7"
-               HorizontalAlignment="Left"
-               Visibility="{Binding LoadingVis}"
-               gif:ImageBehavior.AnimatedSource="/Resources/Icon/loading.gif"
-               gif:ImageBehavior.AutoStart="True"
-               gif:ImageBehavior.RepeatBehavior="0x"/>
+        <Image 
+            Grid.Column="1" MaxHeight="100" MaxWidth="100" Opacity="0.7"
+            HorizontalAlignment="Left"
+            Visibility="{Binding LoadingVis}"
+            gif:ImageBehavior.AnimatedSource="/Resources/Icon/loading.gif"
+            gif:ImageBehavior.AutoStart="True"
+            gif:ImageBehavior.RepeatBehavior="0x"/>
 
         <!-- Error status -->
-        <Image Grid.Column="1" MaxHeight="50" MaxWidth="50" Opacity="0.7"
-               HorizontalAlignment="Left" Margin="25"
-               Visibility="{Binding ErrorVis}"
-               Source="/Resources/Icon/error.png"/>
+        <Image 
+            Grid.Column="1" MaxHeight="50" MaxWidth="50" Opacity="0.7"
+            HorizontalAlignment="Left" Margin="5"
+            Visibility="{Binding ErrorVis}"
+            Source="/Resources/Icon/error.png"/>
     </Grid>
 </UserControl>

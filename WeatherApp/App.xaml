@@ -6,8 +6,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="CustomComboBox.xaml" />
+                <ResourceDictionary Source="CustomColors.xaml"/>
+                <ResourceDictionary Source="CustomComboBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
 
             <Style x:Key="WhiteLabel" TargetType="{x:Type Label}">
                 <Setter Property="Foreground" Value="White"/>
@@ -21,21 +23,28 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            <Style x:Key="WhiteTextBlock" TargetType="{x:Type TextBlock}">
-                <Setter Property="Foreground" Value="White"/>
+
+
+            <Style x:Key="PopupLabel" TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="{DynamicResource FontPopupColor}"/>
+                <Setter Property="FontWeight" Value="DemiBold"/>
+            </Style>
+            
+
+            <Style x:Key="PopupTextBlock" TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{DynamicResource FontPopupColor}"/>
                 <Setter Property="HorizontalAlignment" Value="Stretch"/>
                 <Setter Property="VerticalAlignment" Value="Stretch"/>
-                <Setter Property="Effect">
-                    <Setter.Value>
-                        <DropShadowEffect BlurRadius="10" Opacity="0.35" ShadowDepth="7"/>
-                    </Setter.Value>
-                </Setter>
             </Style>
+            
+            
             <Style x:Key="BackgroundBorder" TargetType="{x:Type Border}">
-                <Setter Property="Background" Value="#88606060"/>
+                <Setter Property="Background" Value="{DynamicResource BackgroundBorderColor}"/>
                 <Setter Property="CornerRadius" Value="10"/>
                 <Setter Property="Margin" Value="3"/>
             </Style>
+            
+            
             <Style x:Key="DropShadowButton" TargetType="{x:Type Button}">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -61,6 +70,8 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+            
+            
             <Style x:Key="CustomButton" TargetType="{x:Type Button}">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -83,7 +94,7 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type Button}">
-                                    <Border Background="#BBBBBBBB"
+                                    <Border Background="{DynamicResource ActiveButtonColor}"
                                         CornerRadius="5"
                                         BorderBrush="Transparent"
                                         BorderThickness="{TemplateBinding BorderThickness}">

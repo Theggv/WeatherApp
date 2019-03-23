@@ -20,7 +20,7 @@ namespace WeatherApp
         }
 
         private const string loadingMsg = "Загрузка..";
-        private const string errorMsg = "Возникла ошибка при заргузке данных";
+        private const string errorMsg = "Не удалось загрузить данные";
 
         public eStatus Status { get; set; } = eStatus.Invisible;
 

@@ -12,14 +12,20 @@
         <local:MainVM/>
     </Window.DataContext>
     <Window.Resources>
-        <DataTemplate DataType="{x:Type local:CommonVM}">
-            <local:CommonView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type local:BrieflyVM}">
-            <local:BrieflyView/>
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="CustomColors.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type local:CommonVM}">
+                <local:CommonView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type local:BrieflyVM}">
+                <local:BrieflyView/>
+            </DataTemplate>
+        </ResourceDictionary>
     </Window.Resources>
-    <Grid Background="Gray">
+    <Grid Background="{DynamicResource BackgroundColor}">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
@@ -27,7 +33,7 @@
 
         <GridSplitter VerticalAlignment="Bottom"/>
         <!-- Верх -->
-        <Grid Grid.Row="0" Background="#FF606060">
+        <Grid Grid.Row="0" Background="{DynamicResource TopBarColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -114,7 +120,7 @@
             <GridSplitter/>
 
             <!-- Боковая панель -->
-            <Grid Grid.Row="0" Grid.Column="0" Background="#FF606060">
+            <Grid Grid.Row="0" Grid.Column="0" Background="{DynamicResource SideBarColor}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="100"/>
@@ -127,15 +133,27 @@
                 <Border Grid.Row="1" Margin="10" CornerRadius="5">
                     <local:BrieflyView Margin="5"
                         DataContext="{Binding CurrentBriefly}"/>
+                    <Border.Effect>
+                        <DropShadowEffect Opacity="0.3" BlurRadius="10" ShadowDepth="7"/>
+                    </Border.Effect>
                 </Border>
 
-                <Label Grid.Row="2" FontSize="16" Margin="10,0,0,0"
+                <GridSplitter
+                    HorizontalAlignment="Stretch"    
+                    Grid.Row="1" VerticalAlignment="Bottom"
+                    Margin="5,0,5,0" Height="2"
+                    Background="{DynamicResource SearchSplitColor}"/>
+
+                <Label Grid.Row="2"
+                       Margin="10,0,0,0" 
+                       Foreground="{DynamicResource FontPopupColor}"
+                       FontSize="16" FontWeight="DemiBold"
                        HorizontalAlignment="Left"
-                       Style="{StaticResource WhiteLabel}"
+                
                        Content="Избранные места:"/>
 
                 <!-- Погода по дням -->
-                <Border Grid.Row="3" Margin="5">
+                <Border Grid.Row="3" Margin="5, 10, 5, 10">
                     <ListBox BorderBrush="Transparent" BorderThickness="0" 
                              Background="Transparent"
                              VerticalContentAlignment="Stretch" 
@@ -180,18 +198,26 @@
                         </ListBox.ItemContainerStyle>
                     </ListBox>
                 </Border>
+                
+                <GridSplitter
+                    HorizontalAlignment="Stretch"    
+                    Grid.Row="3" VerticalAlignment="Bottom"
+                    Margin="5,0,5,0" Height="2"
+                    Background="{DynamicResource SearchSplitColor}"/>
 
                 <Button Grid.Row="4" Margin="5"
+                        FontSize="16" FontWeight="DemiBold"
+                        Foreground="{DynamicResource FontPopupColor}"
                         Style="{StaticResource CustomButton}"
                         Background="Transparent"
-                        FontSize="14" Foreground="White"
                         Content="Определить местоположение"
                         Command="{Binding GetUserLocation}"/>
             </Grid>
 
             <Grid Grid.Column="1">
                 <Grid.Background>
-                    <ImageBrush ImageSource="{Binding BackgroundImage}"/>
+                    <ImageBrush ImageSource="{Binding BackgroundImage}"
+                                Opacity="0.8"/>
                 </Grid.Background>
                 
                 <Grid Visibility="{Binding IsShowCommon}">
@@ -227,7 +253,7 @@
                 </Grid>
 
                 <!-- Детальная погода -->
-                <Border Background="#20606060"
+                <Border Background="{DynamicResource DetailForecastBackgroundColor}"
                     Visibility="{Binding IsShowDetail}">
                     <local:ForecastView DataContext="{Binding DetailVM}"/>
                 </Border>

@@ -38,6 +38,7 @@
     <Reference Include="DotNetZip, Version=1.13.3.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetZip.1.13.3\lib\net40\DotNetZip.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="Prism, Version=7.1.0.431, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Core.7.1.0.431\lib\net45\Prism.dll</HintPath>
     </Reference>
@@ -122,6 +123,14 @@
     </Compile>
     <Compile Include="ViewModels\TemperatureVM.cs" />
     <Compile Include="WeatherData.cs" />
+    <Page Include="CustomColors.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomComboBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\BrieflyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -131,10 +140,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CommonView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CustomComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

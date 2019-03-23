@@ -15,6 +15,7 @@ namespace WeatherApp
     {
         private const string defaultText = "Введите название города";
         private bool isLoading = false;
+        private ResourceDictionary resource;
 
         private MainVM mainVM;
         private SearchModel model;
@@ -54,6 +55,11 @@ namespace WeatherApp
             this.mainVM = mainVM;
             model = new SearchModel();
 
+            resource = new ResourceDictionary
+            {
+                Source = new Uri("pack://application:,,,/CustomColors.xaml")
+            };
+
             AdvancedSearchVM = new AdvancedSearchVM();
 
             AdvancedSearchVM.PropertyChanged += (s, e) =>
@@ -89,8 +95,9 @@ namespace WeatherApp
 
                 SearchImage = new BitmapImage(new Uri($"{basePath}/search_white.png", UriKind.Absolute));
                 MenuImage = new BitmapImage(new Uri($"{basePath}/menu_white.png", UriKind.Absolute));
-                Background = "#FF888888";
-                Foreground = "#AAFFFFFF";
+
+                Background = resource["SearchBarColor"].ToString();
+                Foreground = resource["DeactiveTextColor"].ToString();
 
                 RaisePropertyChanged(nameof(SearchImage));
                 RaisePropertyChanged(nameof(MenuImage));
