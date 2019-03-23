@@ -143,8 +143,14 @@
                           Margin="10"
                           DataContext="{Binding DetailViewModel, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <local:LoadingStatusView Grid.RowSpan="4" 
-                                     DataContext="{Binding LoadingStatusVM}"/>
+            <Border Grid.RowSpan="4">
+                <Border.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding Update}"/>
+                </Border.InputBindings>
+                
+                <local:LoadingStatusView 
+                    DataContext="{Binding LoadingStatusVM}"/>
+            </Border>
         </Grid>
     </Border>
 </UserControl>

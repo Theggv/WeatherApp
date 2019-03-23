@@ -15,16 +15,17 @@
         <DataTemplate DataType="{x:Type local:CommonVM}">
             <local:CommonView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type local:BrieflyVM}">
+            <local:BrieflyView/>
+        </DataTemplate>
     </Window.Resources>
-    <Window.Background>
-        <ImageBrush ImageSource="{Binding BackgroundImage}" Stretch="UniformToFill" Opacity="0.9"/>
-    </Window.Background>
-    <Grid x:Name="mainGrid" Background="Transparent">
+    <Grid Background="Gray">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <GridSplitter VerticalAlignment="Bottom"/>
         <!-- Верх -->
         <Grid Grid.Row="0" Background="#FF606060">
             <Grid.ColumnDefinitions>
@@ -65,6 +66,8 @@
 
         </Grid>
 
+
+        <!-- "Выдвижная панель" скачивания -->
         <Grid Grid.Row="1" Panel.ZIndex="1"
               Visibility="{Binding IsShowDownload}">
             <Grid.ColumnDefinitions>
@@ -82,6 +85,7 @@
                                    DataContext="{Binding GetResourceVM}"/>
         </Grid>
 
+        <!-- "Выдвижная панель" поиска -->
         <Grid Grid.Row="1" Panel.ZIndex="1"
               Visibility="{Binding IsShowSearch}">
             <Grid.ColumnDefinitions>
@@ -97,63 +101,137 @@
             <!-- Расширенный поиск -->
             <local:AdvancedSearchView Margin="5,0,5,5"
                 Grid.Column="1" DataContext="{Binding AdvancedSearchVM}"/>
-            
+
         </Grid>
 
+        <!-- Низ -->
         <Grid Grid.Row="1" Panel.ZIndex="0">
-            <!-- Детальная погода -->
-            <Border Grid.Row="1" Style="{StaticResource BackgroundBorder}"
-                 Visibility="{Binding IsShowDetail}">
-                <local:ForecastView DataContext="{Binding DetailVM}"/>
-            </Border>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Погода по дням -->
-            <Border Grid.Row="1" Style="{StaticResource BackgroundBorder}"
-                Visibility="{Binding IsDetailSelected}">
+            <GridSplitter/>
 
-                <ListBox VerticalContentAlignment="Stretch" 
-                 HorizontalContentAlignment="Stretch"
-                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 Background="Transparent" BorderBrush="Transparent"
-                 ItemsSource="{Binding Common}"
-                 SelectedItem="{Binding SelectedCommon, Mode=TwoWay}"
-                 SelectionMode="Extended">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Margin="5" Rows="2" Columns="2"/>
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListBoxItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                        <Border Background="{TemplateBinding Background}" 
+            <!-- Боковая панель -->
+            <Grid Grid.Row="0" Grid.Column="0" Background="#FF606060">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="1" Margin="10" CornerRadius="5">
+                    <local:BrieflyView Margin="5"
+                        DataContext="{Binding CurrentBriefly}"/>
+                </Border>
+
+                <Label Grid.Row="2" FontSize="14"
+                       Style="{StaticResource WhiteLabel}"
+                       Content="Избранные места"/>
+
+                <!-- Погода по дням -->
+                <Border Grid.Row="3" Margin="5">
+                    <ListBox BorderBrush="Transparent" BorderThickness="0" 
+                             Background="Transparent"
+                             VerticalContentAlignment="Stretch" 
+                             HorizontalContentAlignment="Stretch"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             ItemsSource="{Binding FavoriteList}"
+                             SelectedItem="{Binding CurrentBriefly, Mode=TwoWay}"
+                             SelectionMode="Extended">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                            <Border Background="{TemplateBinding Background}" 
                                         BorderBrush="{TemplateBinding BorderBrush}" 
                                         BorderThickness="{TemplateBinding BorderThickness}"
                                             Margin="5">
-                                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
-                                            <Border.Effect>
-                                                <DropShadowEffect Opacity="0.3" BlurRadius="10" ShadowDepth="7"/>
-                                            </Border.Effect>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Effect">
-                                                    <Setter.Value>
-                                                        <DropShadowEffect Opacity="0.4" BlurRadius="15" ShadowDepth="7"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
-            </Border>
+                                                <ContentPresenter Margin="{TemplateBinding Padding}"/>
+                                                <Border.Effect>
+                                                    <DropShadowEffect Opacity="0.3" BlurRadius="10" ShadowDepth="7"/>
+                                                </Border.Effect>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect Opacity="0.4" BlurRadius="15" ShadowDepth="7"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </Border>
+
+                <Button Grid.Row="4" Margin="5"
+                        Style="{StaticResource CustomButton}"
+                        Background="Transparent"
+                        FontSize="14" Foreground="White"
+                        Content="Определить местоположение"
+                        Command="{Binding GetUserLocation}"/>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Grid.Background>
+                    <ImageBrush ImageSource="{Binding BackgroundImage}"/>
+                </Grid.Background>
+                
+                <Grid Visibility="{Binding IsShowCommon}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="400"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="400"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border 
+                        Grid.Column="1" Grid.Row="1" 
+                        CornerRadius="50" Margin="50,70,50,70"
+                        Visibility="{Binding IsShowCommon}">
+                        <Border.Background>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#44606060" Offset="0"/>
+                                <GradientStop Color="#44606060" Offset="0.6"/>
+                                <GradientStop Color="#22606060" Offset="1"/>
+                            </RadialGradientBrush>
+                        </Border.Background>
+                        <local:CommonView
+                            DataContext="{Binding CurrentCommon}"/>
+                        <Border.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" 
+                                          Command="{Binding ShowDetail}"/>
+                        </Border.InputBindings>
+                    </Border>
+                </Grid>
+
+                <!-- Детальная погода -->
+                <Border
+                    Style="{StaticResource BackgroundBorder}"
+                    Visibility="{Binding IsShowDetail}">
+                    <local:ForecastView DataContext="{Binding DetailVM}"/>
+                </Border>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

@@ -15,6 +15,8 @@ namespace WeatherApp
 {
     public class ForecastVM : BindableBase
     {
+        private int numAttemps;
+
         private ForecastModel model;
         private MainVM rootVM;
         private DailyVM selectedForecast;
@@ -33,7 +35,7 @@ namespace WeatherApp
 
         public LoadingStatusVM LoadingStatusVM { get; set; }
 
-        public DelegateCommand<City> ChangeLocation { get; private set; }
+        public DelegateCommand<Location> ChangeLocation { get; private set; }
 
         public DelegateCommand Back { get; set; }
 
@@ -51,7 +53,10 @@ namespace WeatherApp
 
         public Visibility ElementVis => CurrentForecast != null ? Visibility.Visible : Visibility.Hidden;
 
-        public ForecastVM(City city)
+        public DelegateCommand Update { get; set; }
+
+
+        public ForecastVM(Location location)
         {
             DetailViewModel = new DetailVM(this);
 
@@ -62,13 +67,28 @@ namespace WeatherApp
                 rootVM.HideDetail.Execute();
             });
 
-            ChangeLocation = new DelegateCommand<City>((location) =>
+            Update = new DelegateCommand(() =>
             {
-                model = new ForecastModel(location);
+                if (LoadingStatusVM.Status == LoadingStatusVM.eStatus.Error)
+                {
+                    numAttemps = 0;
+                    model.LoadData();
+                }
+            });
+
+            ChangeLocation = new DelegateCommand<Location>((loc) =>
+            {
+                numAttemps = 0;
+
+                model = new ForecastModel(loc);
 
                 model.PropertyChanged += (s, e) =>
                 {
-                    if (e.PropertyName == "WeatherName")
+                    if (e.PropertyName == "Visibility")
+                        RaisePropertyChanged("ElementVis");
+                    if (e.PropertyName == "Loading")
+                        LoadingStatusVM.LoadingStatus.Execute();
+                    if (e.PropertyName == "LoadingCompleted")
                     {
                         RaisePropertyChanged(nameof(WeatherName));
                         RaisePropertyChanged(nameof(DetailViewModel));
@@ -76,21 +96,24 @@ namespace WeatherApp
                         RaisePropertyChanged(nameof(DailyForecasts));
                         RaisePropertyChanged(nameof(CurrentForecast));
                         RaisePropertyChanged(nameof(Temperature));
-                    }
-                    if (e.PropertyName == "Visibility")
-                        RaisePropertyChanged("ElementVis");
-                    if (e.PropertyName == "Loading")
-                        LoadingStatusVM.LoadingStatus.Execute();
-                    if (e.PropertyName == "LoadingCompleted")
+
                         LoadingStatusVM.ResetStatus.Execute();
+                    }
                     if (e.PropertyName == "LoadingError")
-                        LoadingStatusVM.ErrorStatus.Execute();
+                    {
+                        if (numAttemps < 3)
+                            model.LoadData();
+                        else
+                            LoadingStatusVM.ErrorStatus.Execute();
+
+                        numAttemps++;
+                    }
                 };
 
                 model.LoadData();
             });
 
-            ChangeLocation.Execute(city);
+            ChangeLocation.Execute(location);
         }
 
         public List<HourVM> GetDetailForecast(Forecast f) => model.GetDetailForecast(f);
@@ -152,14 +175,18 @@ namespace WeatherApp
                     // Try get data from api
                     _data = new WeatherData(query);
 
+                    _city = _data.Location;
+
                     UpdateForecast();
                 }
-                catch (Exception e)
+                catch
                 {
                     // Try to get data from database
 
                     if(_city != null)
-                        ExtractDataFromDB(_city);
+                        ExtractDataFromDB(_city.Id);
+                    else if(_location != null)
+                        ExtractDataFromDB(_location.ForecastId);
                     else
                         RaisePropertyChanged("LoadingError");
                 }
@@ -242,96 +269,50 @@ namespace WeatherApp
                 command.ExecuteNonQuery();
             }
 
+            UpdateLocationId();
+
             CurrentForecast = GetCurrentForecast();
-            RaisePropertyChanged("WeatherName");
             RaisePropertyChanged("LoadingCompleted");
         }
+        
 
-        public Forecast GetForecastByDate(City location, DateTime dateTime)
+        public void ExtractDataFromDB(int cityId)
         {
+            _data = new WeatherData();
+
             using (SqlConnection conn = new SqlConnection(ConnectionInfo.ConnString))
             {
                 conn.Open();
 
                 SqlCommand command = new SqlCommand
                 {
-                    CommandText = $"SELECT [id], [humidity] FROM [forecast]" +
-                                $"WHERE city_id = {location.Id} and [from] < '{dateTime}' and [to] > '{dateTime}';",
                     Connection = conn
                 };
 
-                SqlDataReader reader = command.ExecuteReader();
+                command.CommandText = "SELECT * FROM [dbo].[city] " +
+                                        $"WHERE [external_id] = {cityId};";
 
-                // if hasn't valid forecast
-                if (!reader.HasRows)
+                using(SqlDataReader reader = command.ExecuteReader())
                 {
-                    reader.Close();
-                    return null;
-                }
+                    if (!reader.HasRows)
+                    {
+                        RaisePropertyChanged("LoadingError");
+                        return;
+                    }
 
-                object[] values = new object[reader.FieldCount];
 
-                while (reader.Read())
-                {
+                    object[] values = new object[reader.FieldCount];
+
+                    reader.Read();
                     reader.GetValues(values);
+
+                    _data.Location = new City
+                    {
+                        Id = cityId,
+                        Name = values[2].ToString(),
+                        Country = values[3].ToString()
+                    };
                 }
-
-                reader.Close();
-
-                var id = values[0];
-
-                // works
-                command.CommandText = "SELECT * FROM [dbo].[forecast] " +
-                                        "[INNER] JOIN [dbo].[temperature] " +
-                                        "ON id = [temperature].[forecast_id] " +
-                                        "JOIN [dbo].precipitation " +
-                                        "ON id = [precipitation].forecast_id " +
-                                        "JOIN [dbo].pressure " +
-                                        "ON id = [pressure].forecast_id " +
-                                        "JOIN [dbo].symbol " +
-                                        "ON id = symbol.forecast_id " +
-                                        "JOIN [dbo].wind_dir " +
-                                        "ON id = wind_dir.forecast_id " +
-                                        "JOIN [dbo].wind_speed " +
-                                        "ON id = wind_speed.forecast_id " +
-                                        "JOIN [dbo].clouds " +
-                                        "ON id = clouds.forecast_id " +
-                                        $"WHERE [id] = {id};";
-
-
-                reader = command.ExecuteReader();
-
-                if (!reader.HasRows)
-                {
-                    reader.Close();
-                    return null;
-                }
-
-                values = new object[reader.FieldCount];
-
-                reader.Read();
-                reader.GetValues(values);
-                reader.Close();
-
-                return new Forecast(values);
-            }
-        }
-
-        public void ExtractDataFromDB(City city)
-        {
-            _data = new WeatherData
-            {
-                Location = city
-            };
-
-            using (SqlConnection conn = new SqlConnection(ConnectionInfo.ConnString))
-            {
-                conn.Open();
-
-                SqlCommand command = new SqlCommand
-                {
-                    Connection = conn
-                };
 
                 command.CommandText = "SELECT * FROM [dbo].[forecast] " +
                                         "[INNER] JOIN [dbo].[temperature] " +
@@ -348,7 +329,7 @@ namespace WeatherApp
                                         "ON id = wind_speed.forecast_id " +
                                         "JOIN [dbo].clouds " +
                                         "ON id = clouds.forecast_id " +
-                                        $"WHERE [city_id] = {city.Id};";
+                                        $"WHERE [city_id] = {cityId};";
 
                 try
                 {
@@ -372,16 +353,26 @@ namespace WeatherApp
                 }
                 catch (SqlException)
                 {
-                    ExtractDataFromDB(city);
+                    ExtractDataFromDB(cityId);
                 }
             }
 
             CurrentForecast = GetCurrentForecast();
-            RaisePropertyChanged("WeatherName");
             RaisePropertyChanged("LoadingCompleted");
         }
 
-        public City GetCity() => _data?.Location;
+        public City GetCity()
+        {
+            if (_data?.Location == null)
+                return null;
+
+            if (_location == null || _location.Name == null)
+                return _data.Location;
+
+            _data.Location.Name = _location.DisplayName;
+
+            return _data.Location;
+        }
 
         public TemperatureVM GetTemperature()
         {
@@ -620,6 +611,28 @@ namespace WeatherApp
             daily.ForEach(f => obs.Add(new DailyVM(f)));
 
             return obs;
+        }
+
+        private void UpdateLocationId()
+        {
+            if (_location == null || _location.Id == 0)
+                return;
+
+            _location.ForecastId = _city.Id;
+
+            using(SqlConnection conn = new SqlConnection(ConnectionInfo.ConnString))
+            {
+                conn.Open();
+
+                SqlCommand command = new SqlCommand
+                {
+                    Connection = conn,
+                    CommandText = $"UPDATE [location] SET [forecast_id] = {_location.ForecastId} " +
+                                    $"WHERE [id] = {_location.Id};"
+                };
+
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

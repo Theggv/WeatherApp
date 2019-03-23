@@ -6,34 +6,75 @@ using System.Threading.Tasks;
 using System.Windows;
 using Prism.Mvvm;
 using Prism.Commands;
-using System.Data.SqlClient;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
+using System.Device.Location;
 
 namespace WeatherApp
 {
-    public class MainVM: BindableBase
+    public class MainVM : BindableBase
     {
-        private MainModel model;
-        private Country selectedCountry;
-        private City selectedCity;
-        private BitmapImage bgImage;
+        private BrieflyVM currentBriefly;
+        private CommonVM currentCommon;
 
-        public BitmapImage BackgroundImage
+        private MainModel model;
+
+        private bool isShowDetail;
+
+
+        public BitmapImage BackgroundImage => CurrentBriefly?.ForecastModel?.GetImage();
+
+
+        public BrieflyVM CurrentBriefly
         {
-            get => bgImage;
+            get => currentBriefly;
             set
             {
-                if(value != null)
+                if (value != currentBriefly && value != null)
                 {
-                    bgImage = value;
+                    currentBriefly = value;
 
-                    RaisePropertyChanged("BackgroundImage");
+                    RaisePropertyChanged(nameof(CurrentBriefly));
+
+                    if (value.Location != null)
+                    {
+                        CurrentCommon = new CommonVM(this, value);
+
+                        RaisePropertyChanged(nameof(BackgroundImage));
+
+                        if (isShowDetail)
+                            DetailVM.ChangeLocation.Execute(value.Location);
+                    }
+
+                    CurrentBriefly.PropertyChanged += (s, e) =>
+                    {
+                        if (e.PropertyName == "LoadingCompleted")
+                        {
+                            CurrentCommon = new CommonVM(this, value);
+
+                            RaisePropertyChanged(nameof(BackgroundImage));
+
+                            if (isShowDetail)
+                                DetailVM.ChangeLocation.Execute(value.Location);
+                        }
+                    };
                 }
             }
         }
 
-        public ObservableCollection<CommonVM> Common { get; set; }
+        public CommonVM CurrentCommon
+        {
+            get => currentCommon;
+            set
+            {
+                currentCommon = value;
+
+                RaisePropertyChanged(nameof(CurrentCommon));
+                RaisePropertyChanged(nameof(IsShowCommon));
+            }
+        }
+
+        public ObservableCollection<BrieflyVM> FavoriteList { get; set; }
 
         public ForecastVM DetailVM { get; set; }
 
@@ -43,58 +84,11 @@ namespace WeatherApp
 
         public GetResourceVM GetResourceVM { get; set; }
 
-        public CommonVM SelectedCommon
-        {
-            set
-            {
-                if (value != null && value.Visibility != Visibility.Collapsed)
-                {
-                    SelectDetail.Execute(value.Location);
-                    BackgroundImage = value.BackgroundImage;
-                }
-            }
-        }
 
+        public Visibility IsShowCommon => (!isShowDetail && CurrentCommon != null) ?
+            Visibility.Visible : Visibility.Collapsed;
 
-        public List<Country> Countries => model.Countries;
-
-        public Country SelectedCountry
-        {
-            get => selectedCountry;
-            set
-            {
-                if(selectedCountry != value)
-                {
-                    selectedCountry = value;
-
-                    model.LoadCities(selectedCountry);
-                }
-            }
-        }
-
-        public List<City> Cities => model.Cities;
-
-        public City SelectedCity
-        {
-            get => selectedCity;
-            set
-            {
-                if (selectedCity != value && value != null)
-                {
-                    selectedCity = value;
-
-                    Common.RemoveAt(0);
-                    Common.Add(new CommonVM(this, selectedCity));
-
-                    RaisePropertyChanged("Common");
-                }
-            }
-        }
-        
-
-        public Visibility IsDetailSelected => DetailVM != null ? Visibility.Collapsed : Visibility.Visible;
-
-        public Visibility IsShowDetail => DetailVM == null ? Visibility.Collapsed : Visibility.Visible;
+        public Visibility IsShowDetail => isShowDetail ? Visibility.Visible : Visibility.Collapsed;
 
         public Visibility IsShowSearch => SearchVM.IsShowDetailSearch ? Visibility.Visible : Visibility.Collapsed;
 
@@ -110,14 +104,24 @@ namespace WeatherApp
 
         public DelegateCommand DownloadInfo { get; set; }
 
-        public DelegateCommand<City> SelectDetail { get; set; }
+        public DelegateCommand ShowDetail { get; set; }
+
+        public DelegateCommand<BrieflyVM> AddToFavorites { get; set; }
+
+        public DelegateCommand<BrieflyVM> DeleteFromFavorites { get; set; }
+
+        public DelegateCommand GetUserLocation { get; set; }
 
 
         public MainVM()
         {
             model = new MainModel();
+
             SearchVM = new SearchVM(this);
             GetResourceVM = new GetResourceVM();
+            CurrentBriefly = new BrieflyVM();
+
+            FavoriteList = new ObservableCollection<BrieflyVM>();
 
             SearchVM.PropertyChanged += (s, e) =>
             {
@@ -129,41 +133,19 @@ namespace WeatherApp
                     RaisePropertyChanged(nameof(IsShowSearch));
                 }
 
-                if(e.PropertyName == "CitySelected")
+                if (e.PropertyName == "CitySelected")
                 {
-                    Common.RemoveAt(0);
-                    Common.Add(new CommonVM(this, SearchVM.AdvancedSearchVM.SelectedCity));
+                    CurrentBriefly = new BrieflyVM(this, SearchVM.AdvancedSearchVM.SelectedCity);
 
-                    RaisePropertyChanged("Common");
+                    RaisePropertyChanged("CurrentBriefly");
                 }
             };
-
-            model.PropertyChanged += (s, e) =>
-            {
-                if(e.PropertyName == "Countries")
-                {
-                    RaisePropertyChanged("Countries");
-                }
-                if (e.PropertyName == "Cities")
-                {
-                    RaisePropertyChanged("Cities");
-                }
-            };
-
-            model.LoadCountries();
-
-            Common = new ObservableCollection<CommonVM>
-            {
-                new CommonVM(this, new City(2643743)),
-                new CommonVM(this, new City(4317656)),
-                new CommonVM(this, new City(511196)),
-                new CommonVM(this, new City(524901))
-            };
-
-            BackgroundImage = Common[0].BackgroundImage;
 
             Close = new DelegateCommand(() =>
             {
+                var settings = new UserSettings();
+                settings.SaveSettings(FavoriteList, FavoriteList?.First());
+
                 Environment.Exit(0);
             });
 
@@ -172,22 +154,28 @@ namespace WeatherApp
                 DetailVM?.Back.Execute();
             });
 
-            SelectDetail = new DelegateCommand<City>((city) =>
+            ShowDetail = new DelegateCommand(() =>
             {
-                DetailVM = new ForecastVM(city);
+                if (CurrentBriefly.LoadingStatusVM.Status == LoadingStatusVM.eStatus.Error)
+                    return;
+
+                isShowDetail = true;
+
+                DetailVM = new ForecastVM(CurrentCommon.Location);
                 DetailVM.SetRootVM(this);
 
-                RaisePropertyChanged(nameof(IsDetailSelected));
+                RaisePropertyChanged(nameof(IsShowCommon));
                 RaisePropertyChanged(nameof(IsShowDetail));
                 RaisePropertyChanged(nameof(DetailVM));
             });
 
             HideDetail = new DelegateCommand(() =>
             {
-                DetailVM = null;
-                SelectedCommon = null;
+                isShowDetail = false;
 
-                RaisePropertyChanged(nameof(IsDetailSelected));
+                DetailVM = null;
+
+                RaisePropertyChanged(nameof(IsShowCommon));
                 RaisePropertyChanged(nameof(IsShowDetail));
                 RaisePropertyChanged(nameof(DetailVM));
             });
@@ -212,108 +200,87 @@ namespace WeatherApp
                 if (e.PropertyName == "UnavailableCountries")
                     SearchVM.AdvancedSearchVM.UpdateCountries.Execute();
             };
+
+            AddToFavorites = new DelegateCommand<BrieflyVM>((item) =>
+            {
+                if (FavoriteList.Count(vm => vm.City?.Id == item.City?.Id) > 0)
+                    return;
+
+                FavoriteList.Add(item);
+            });
+
+            DeleteFromFavorites = new DelegateCommand<BrieflyVM>((item) =>
+            {
+                if (FavoriteList.Count(vm => vm.City?.Id == item.City?.Id) == 0)
+                    return;
+
+                FavoriteList.Remove(FavoriteList
+                    .First(vm => vm.City?.Id == item.City?.Id));
+            });
+
+            GetUserLocation = new DelegateCommand(() =>
+            {
+                model.GetLocation();
+            });
+
+            model.PropertyChanged += (s, e) =>
+            {
+                if(e.PropertyName == "UserLocation")
+                {
+                    CurrentBriefly = new BrieflyVM(this, new Location
+                    {
+                        Latitude = model.UserLocation.Latitude,
+                        Longtitude = model.UserLocation.Longitude,
+                        IsSearchByCoords = true
+                    });
+                }
+                if (e.PropertyName == "SettingsLoaded")
+                {
+                    CurrentBriefly = new BrieflyVM(this, model.DefaultLocation);
+
+                    FavoriteList = new ObservableCollection<BrieflyVM>(model.FavoriteList
+                        .Select(item => new BrieflyVM(this, item)));
+                }
+            };
         }
     }
 
     public class MainModel : BindableBase
     {
-        public List<Country> Countries { get; private set; }
+        public GeoCoordinate UserLocation { get; set; }
 
-        public List<City> Cities { get; private set; }
+        public List<Location> FavoriteList { get; set; }
 
-        public MainModel() { }
+        public Location DefaultLocation { get; set; }
 
-        public void LoadCountries()
-        {
-            using (SqlConnection conn = new SqlConnection(ConnectionInfo.ConnString))
-            {
-                conn.Open();
 
-                SqlCommand command = new SqlCommand
-                {
-                    Connection = conn
-                };
-
-                command.CommandText =   "SELECT [code], [name] " +
-                                        "FROM [weatherdb].[dbo].[country];";
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (!reader.HasRows)
-                {
-                    reader.Close();
-                    return;
-                }
-
-                object[] values = new object[reader.FieldCount];
-
-                Countries = new List<Country>();
-
-                while (reader.Read())
-                {
-                    reader.GetValues(values);
-                    Countries.Add(new Country()
-                    {
-                        Code = values[0].ToString(),
-                        Name = values[1].ToString()
-                    });
-                }
-
-                Countries.Sort((a, b) => a.Name.CompareTo(b.Name));
-            }
-
-            RaisePropertyChanged(nameof(Countries));
-        }
-
-        public void LoadCities(Country country)
+        public MainModel()
         {
             Task.Run(() =>
             {
-                using (SqlConnection conn = new SqlConnection(ConnectionInfo.ConnString))
-                {
-                    conn.Open();
+                var settings = UserSettings.LoadSettings();
 
-                    SqlCommand command = new SqlCommand
-                    {
-                        Connection = conn
-                    };
+                FavoriteList = settings.Locations.Select(item => item.ToLocation()).ToList();
+                DefaultLocation = settings.DefaultLocation.ToLocation();
 
-                    command.CommandText = "SELECT [external_id], [city].[name], [country].[name] " +
-                                            "FROM[dbo].[city] " +
-                                            "JOIN[dbo].[country] " +
-                                            "ON country.code = country_id " +
-                                            $"WHERE [city].[country_id] = '{country.Code}';";
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    if (!reader.HasRows)
-                    {
-                        reader.Close();
-                        return;
-                    }
-
-                    object[] values = new object[reader.FieldCount];
-
-                    Cities = new List<City>();
-
-                    while (reader.Read())
-                    {
-                        reader.GetValues(values);
-                        Cities.Add(new City()
-                        {
-                            Id = int.Parse(values[0].ToString()),
-                            Name = values[1].ToString(),
-                            Country = values[2].ToString(),
-                        });
-                    }
-
-                    Cities.Sort((a, b) => a.Name.CompareTo(b.Name));
-                }
-
-                RaisePropertyChanged(nameof(Cities));
+                RaisePropertyChanged("SettingsLoaded");
             });
+        }
 
-            
+        public void GetLocation()
+        {
+            GeoCoordinateWatcher watcher = new GeoCoordinateWatcher();
+
+            watcher.StatusChanged += (s, e) =>
+            {
+                if (e.Status == GeoPositionStatus.Ready)
+                {
+                    UserLocation = watcher.Position.Location;
+
+                    RaisePropertyChanged(nameof(UserLocation));
+                }
+            };
+            watcher.Start();
         }
     }
 }

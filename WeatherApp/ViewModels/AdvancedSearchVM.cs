@@ -303,7 +303,7 @@ ORDER BY [name]";
                         $"ORDER BY [population] DESC";
                 }
 
-                using (SqlDataReader reader = command.ExecuteReaderAsync().Result)
+                using (SqlDataReader reader = command.ExecuteReader())
                 {
                     if (!reader.HasRows)
                         return;

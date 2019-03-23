@@ -13,14 +13,9 @@
     </UserControl.Resources>
 
     <Border CornerRadius="10">
-        <Border.Background>
-            <ImageBrush ImageSource="{Binding BackgroundImage}"
-                        Opacity="0.65"
-                        Stretch="UniformToFill"/>
-        </Border.Background>
         <Grid d:DataContext="{d:DesignInstance {x:Type local:CommonVM}}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -30,9 +25,9 @@
 
             <!-- Location -->
             <Label Grid.ColumnSpan="2" Margin="10"
-                   Style="{StaticResource WhiteLabel}" FontSize="24"
+                   Style="{StaticResource WhiteLabel}" FontSize="30"
                    Visibility="{Binding Visibility}"
-                   Content="{Binding Location, Converter={StaticResource LocationConverter}}"/>
+                   Content="{Binding City, Converter={StaticResource LocationConverter}}"/>
 
             <!-- Temperature -->
             <local:TemperatureView Grid.Row="1"
@@ -41,16 +36,6 @@
             <!-- Icon -->
             <Image Grid.Row="1" Grid.Column="1" Margin="10"
                    Source="{Binding Icon}" Stretch="Uniform"/>
-
-            <!-- Loading status -->
-            <Border Grid.RowSpan="2" Grid.ColumnSpan="2">
-                <Border.InputBindings>
-                    <MouseBinding MouseAction="LeftClick" Command="{Binding Update}"/>
-                </Border.InputBindings>
-
-                <local:LoadingStatusView 
-                        DataContext="{Binding LoadingStatusVM}"/>
-            </Border>
         </Grid>
     </Border>
 </UserControl>

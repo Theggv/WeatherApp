@@ -15,110 +15,37 @@ namespace WeatherApp
     public class CommonVM: BindableBase
     {
         private MainVM mainVM;
-
-        private ForecastModel forecastModel;
-        private HourModel hourModel;
-
-        public LoadingStatusVM LoadingStatusVM { get; set; }
-
-        public TemperatureVM TemperatureVM => forecastModel.GetTemperature();
+        private BrieflyVM brieflyVM;
 
 
-        public Visibility Visibility => LoadingStatusVM.Status == eStatus.Invisible ? 
-            Visibility.Visible : Visibility.Collapsed;
+        public TemperatureVM TemperatureVM { get; set; }
 
 
-        public City Location => forecastModel.GetCity();
+        public City City { get; set; }
+
+        public Location Location { get; set; }
         
 
-        public BitmapImage BackgroundImage => forecastModel.GetImage();
-
-        public BitmapImage Icon => hourModel.GetImage();
+        public BitmapImage Icon { get; set; }
 
 
-        public DelegateCommand Update { get; set; }
-
-
-        public CommonVM(MainVM main, City city)
+        public CommonVM(MainVM main, BrieflyVM vm)
         {
             mainVM = main;
+            brieflyVM = vm;
 
-            forecastModel = new ForecastModel(city);
+            Location = brieflyVM.Location;
 
-            hourModel = new HourModel();
+            TemperatureVM = brieflyVM.ForecastModel?.GetTemperature();
 
-            LoadingStatusVM = new LoadingStatusVM();
+            City = brieflyVM.City;
 
-            Update = new DelegateCommand(() =>
+            try
             {
-                if(LoadingStatusVM.Status == eStatus.Error)
-                    forecastModel.LoadData();
-            });
-
-            forecastModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == "WeatherName")
-                {
-                    hourModel = new HourModel(forecastModel.CurrentForecast);
-
-                    RaisePropertyChanged(nameof(Location));
-                    RaisePropertyChanged(nameof(Icon));
-                    RaisePropertyChanged(nameof(TemperatureVM));
-                    RaisePropertyChanged(nameof(BackgroundImage));
-                }
-
-                if (e.PropertyName == "Loading")
-                    LoadingStatusVM.LoadingStatus.Execute();
-                if (e.PropertyName == "LoadingCompleted")
-                    LoadingStatusVM.ResetStatus.Execute();
-                if (e.PropertyName == "LoadingError")
-                    LoadingStatusVM.ErrorStatus.Execute();
-
-                RaisePropertyChanged("Visibility");
-            };
-
-            forecastModel.LoadData();
-        }
-
-        public CommonVM(MainVM main, Location location)
-        {
-            mainVM = main;
-
-            forecastModel = new ForecastModel(location);
-
-            hourModel = new HourModel();
-
-            LoadingStatusVM = new LoadingStatusVM();
-
-            Update = new DelegateCommand(() =>
-            {
-                if (LoadingStatusVM.Status == eStatus.Error)
-                    forecastModel.LoadData();
-            });
-
-            forecastModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == "WeatherName")
-                {
-                    hourModel = new HourModel(forecastModel.CurrentForecast);
-
-                    RaisePropertyChanged(nameof(Location));
-                    RaisePropertyChanged(nameof(Icon));
-                    RaisePropertyChanged(nameof(TemperatureVM));
-                    RaisePropertyChanged(nameof(BackgroundImage));
-                }
-
-                if (e.PropertyName == "Loading")
-                    LoadingStatusVM.LoadingStatus.Execute();
-                if (e.PropertyName == "LoadingCompleted")
-                    LoadingStatusVM.ResetStatus.Execute();
-                if (e.PropertyName == "LoadingError")
-                    LoadingStatusVM.ErrorStatus.Execute();
-
-                RaisePropertyChanged("Visibility");
-            };
-
-            forecastModel.LoadData();
+                Icon = new BitmapImage(brieflyVM.Icon?.UriSource);
+                Icon.Freeze();
+            }
+            catch { };
         }
     }
 }

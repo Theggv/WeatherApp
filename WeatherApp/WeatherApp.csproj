@@ -43,6 +43,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Device" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml" />
@@ -66,6 +67,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BrieflyVM.cs" />
+    <Compile Include="UserSettings.cs" />
+    <Compile Include="Views\BrieflyView.xaml.cs">
+      <DependentUpon>BrieflyView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AdvancedSearchView.xaml.cs">
       <DependentUpon>AdvancedSearchView.xaml</DependentUpon>
     </Compile>
@@ -116,6 +122,10 @@
     </Compile>
     <Compile Include="ViewModels\TemperatureVM.cs" />
     <Compile Include="WeatherData.cs" />
+    <Page Include="Views\BrieflyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AdvancedSearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -259,6 +269,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icon\download.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icon\close.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
