@@ -9,6 +9,10 @@ using Prism.Commands;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
 using System.Device.Location;
+using System.Data.SqlClient;
+using System.IO;
+using Microsoft.Win32;
+using Microsoft.Office.Interop.Excel;
 
 namespace WeatherApp
 {
@@ -53,9 +57,14 @@ namespace WeatherApp
                             CurrentCommon = new CommonVM(this, value);
 
                             RaisePropertyChanged(nameof(BackgroundImage));
+                            RaisePropertyChanged("SearchLoadingCompleted");
 
                             if (isShowDetail)
                                 DetailVM.ChangeLocation.Execute(value.Location);
+                        }
+                        if(e.PropertyName == "LoadingError")
+                        {
+                            RaisePropertyChanged("SearchLoadingCompleted");
                         }
                     };
                 }
@@ -111,6 +120,8 @@ namespace WeatherApp
         public DelegateCommand<BrieflyVM> DeleteFromFavorites { get; set; }
 
         public DelegateCommand GetUserLocation { get; set; }
+
+        public DelegateCommand SaveReport { get; set; }
 
 
         public MainVM()
@@ -232,6 +243,11 @@ namespace WeatherApp
                 model.GetLocation();
             });
 
+            SaveReport = new DelegateCommand(() =>
+            {
+                model.SaveReport();
+            });
+
             model.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == "UserLocation")
@@ -294,6 +310,75 @@ namespace WeatherApp
                 }
             };
             watcher.Start();
+        }
+
+        public void SaveReport()
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionInfo.ConnString))
+            {
+                conn.Open();
+
+                SqlCommand command = new SqlCommand
+                {
+                    Connection = conn,
+                    CommandText = @"
+SELECT name, alternatename, MIN([from]), MAX([to]), AVG([temperature].value),
+MIN([temperature].value), MAX([temperature].value)
+  FROM [forecast]
+  INNER JOIN [temperature] ON [forecast].id = [temperature].forecast_id
+  INNER JOIN [location] ON [forecast].city_id = [location].forecast_id
+  WHERE [forecast].city_id <> 0
+  GROUP BY name, alternatename
+ORDER BY [name] DESC;"
+                };
+
+                using(SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (!reader.HasRows)
+                    {
+                        MessageBox.Show("В базе данных нет информации для формирования отчёта.\n" +
+                            "Попробуйте повторить попытку.");
+                        return;
+                    }
+
+                    var app = new Microsoft.Office.Interop.Excel.Application
+                    {
+                        Visible = true
+                    };
+
+                    app.Workbooks.Add();
+
+                    Worksheet worksheet = (Worksheet)app.ActiveSheet;
+                    worksheet.Cells[1, 1] = "Название города";
+                    worksheet.Cells[1, 2] = "Альтернативное название города";
+                    worksheet.Cells[1, 3] = "От";
+                    worksheet.Cells[1, 4] = "До";
+                    worksheet.Cells[1, 5] = "Средняя температура";
+                    worksheet.Cells[1, 6] = "Минимальная температура";
+                    worksheet.Cells[1, 7] = "Максимальная температура";
+
+                    worksheet.StandardWidth = 20;
+
+                    int curRow = 2;
+
+                    object[] values = new object[reader.FieldCount];
+                    
+                    while (reader.Read())
+                    {
+                        reader.GetValues(values);
+
+                        worksheet.Cells[curRow, 1] = values[0].ToString();
+                        worksheet.Cells[curRow, 2] = values[1].ToString();
+                        worksheet.Cells[curRow, 3] = DateTime.Parse(values[2].ToString()).ToLongDateString();
+                        worksheet.Cells[curRow, 4] = DateTime.Parse(values[3].ToString()).ToLongDateString();
+                        worksheet.Cells[curRow, 5] = Math.Round(FixDouble.ToDouble(values[4].ToString()), 1);
+                        worksheet.Cells[curRow, 6] = Math.Round(FixDouble.ToDouble(values[5].ToString()), 1);
+                        worksheet.Cells[curRow, 7] = Math.Round(FixDouble.ToDouble(values[6].ToString()), 1);
+
+                        curRow++;
+                    }
+                }
+            }
         }
     }
 }

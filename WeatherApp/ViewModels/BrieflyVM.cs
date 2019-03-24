@@ -131,7 +131,10 @@ namespace WeatherApp
                     if (numAttemps < 3)
                         ForecastModel.LoadData();
                     else
+                    {
                         LoadingStatusVM.ErrorStatus.Execute();
+                        RaisePropertyChanged("LoadingError");
+                    }
 
                     numAttemps++;
                 }

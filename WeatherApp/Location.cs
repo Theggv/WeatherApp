@@ -99,7 +99,7 @@ modification date : date of last modification in yyyy-MM-dd format
         public string ToQuery()
         {
             return $"({Format(ForecastId)}, " +
-                $"{Format(Name)}, {GetRussianName()}, " +
+                $"{Format(Name)}, {Format(AlternativeName)}, " +
                 $"{Format(Latitude)}, {Format(Longtitude)}, {Format(FeatureClass)}, {Format(FeatureCode)}, " +
                 $"{Format(CountryCode)}, " +
                 $"{Format(AdminCode1)}, {Format(AdminCode2)}, {Format(AdminCode3)}, {Format(AdminCode4)}, " +
@@ -125,33 +125,6 @@ modification date : date of last modification in yyyy-MM-dd format
         }
 
         private string Format(char c) => Format("" + c);
-
-        private string GetRussianName()
-        {
-            var names = AlternativeName?.Split(',');
-
-            if (names == null || names.Length == 0)
-                return Format(null);
-
-            var alphabet = Enumerable.Range('а', 33).ToList();
-            string name = "";
-
-            for (int i = 0; i < names.Length; i++)
-            {
-                name = names[i].ToLowerInvariant();
-
-                if (name == "")
-                    continue;
-
-                for (int j = 0; j < alphabet.Count; j++)
-                {
-                    if (name.Contains((char)alphabet[j]))
-                        return Format(names[i]);
-                }
-            }
-
-            return Format(null);
-        }
     }
 
     public class AlternativeName

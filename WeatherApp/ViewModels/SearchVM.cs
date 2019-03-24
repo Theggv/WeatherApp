@@ -121,6 +121,9 @@ namespace WeatherApp
                     // city selected
 
                     RaisePropertyChanged("AdvancedSearchSelected");
+                    
+                    isLoading = true;
+                    RaisePropertyChanged(nameof(LoadingVis));
                 }
                 else
                 {
@@ -130,6 +133,9 @@ namespace WeatherApp
                     // search by query
 
                     RaisePropertyChanged("QueryValid");
+
+                    isLoading = true;
+                    RaisePropertyChanged(nameof(LoadingVis));
                 }
             });
 
@@ -139,6 +145,15 @@ namespace WeatherApp
 
                 RaisePropertyChanged(nameof(IsShowDetailSearch));
             });
+
+            mainVM.PropertyChanged += (s, e) =>
+            {
+                if(e.PropertyName == "SearchLoadingCompleted")
+                {
+                    isLoading = false;
+                    RaisePropertyChanged(nameof(LoadingVis));
+                }
+            };
 
             LostFocus.Execute();
         }

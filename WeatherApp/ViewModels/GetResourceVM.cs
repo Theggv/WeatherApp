@@ -263,17 +263,6 @@ GROUP BY[country].[name], [country].[code]";
 
                 webClient.DownloadFileAsync(new Uri(dataPath), $"temp/{country.Code}.zip");
             }
-
-            /*
-            Task.Run(() =>
-            {
-                Status = ProgressStatus.Download;
-                RaisePropertyChanged(nameof(Status));
-
-                webClient.DownloadFileAsync(new Uri(dataPath), $"temp/{country.Code}.zip");
-                webClient.DownloadFileAsync(new Uri(namePath), $"temp/{country.Code}_names.zip");
-            });
-            */
         }
 
         private void ImportData(Country country)
@@ -305,7 +294,9 @@ GROUP BY[country].[name], [country].[code]";
 
             sr.Close();
 
-            var localizedNames = names.Where(name => name.Iso == "ru" && name.Name != "").ToList();
+            var localizedNames = names
+                .Where(name => name.Iso == "ru" && name.Name != "")
+                .ToList();
 
             // Skip not important locations
             locations = locations
@@ -320,7 +311,6 @@ GROUP BY[country].[name], [country].[code]";
 
             using (SqlConnection conn = new SqlConnection(ConnectionInfo.ConnString))
             {
-                var piter2 = locations.Where(item => item.Id == 498817).ToList();
                 conn.Open();
 
                 string baseQuery = @"INSERT INTO [dbo].[location]
@@ -434,16 +424,12 @@ VALUES ";
             var namesPath = new DirectoryInfo("temp/names");
 
             foreach (var f in tempPath.GetFiles())
-            {
                 f.Delete();
-            }
 
             foreach (var dir in dataPath.GetDirectories())
             {
                 foreach (var f in dir.GetFiles())
-                {
                     f.Delete();
-                }
 
                 dir.Delete();
             }
@@ -451,9 +437,7 @@ VALUES ";
             foreach (var dir in namesPath.GetDirectories())
             {
                 foreach (var f in dir.GetFiles())
-                {
                     f.Delete();
-                }
 
                 dir.Delete();
             }

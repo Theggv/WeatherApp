@@ -30,41 +30,5 @@ namespace WeatherApp
             Id = int.Parse(doc.SelectSingleNode(idQuery).InnerText);
             Country = doc.SelectSingleNode(countryQuery).InnerText;
         }
-
-        public City(int cityId)
-        {
-            string cityQuery = "SELECT [external_id], [city].[name], [country].[name] " +
-                "FROM[dbo].[city] " +
-                "JOIN[dbo].[country] " +
-                "ON country.code = country_id " +
-                $"WHERE [external_id] = {cityId};";
-
-            using (SqlConnection conn = new SqlConnection(ConnectionInfo.ConnString))
-            {
-                conn.Open();
-
-                SqlCommand command = new SqlCommand
-                {
-                    Connection = conn,
-                    CommandText = cityQuery
-                };
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (!reader.HasRows)
-                {
-                    reader.Close();
-                    return;
-                }
-
-                reader.Read();
-
-                Id = int.Parse(reader[0].ToString());
-                Name = reader[1].ToString();
-                Country = reader[2].ToString();
-
-                reader.Close();
-            }  
-        }
     }
 }

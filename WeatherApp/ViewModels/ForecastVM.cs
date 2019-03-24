@@ -179,11 +179,6 @@ namespace WeatherApp
             }
         }
 
-        public ForecastModel(City city)
-        {
-            _city = city;
-        }
-
         public ForecastModel(Location location)
         {
             _location = location;
@@ -361,7 +356,7 @@ namespace WeatherApp
                                         "ON id = wind_speed.forecast_id " +
                                         "JOIN [dbo].clouds " +
                                         "ON id = clouds.forecast_id " +
-                                        $"WHERE [city_id] = {cityId};";
+                                        $"WHERE [city_id] = {cityId} AND [to] > '{DateTime.Now}';";
 
                 try
                 {

@@ -57,7 +57,7 @@
                 <!-- Search -->
                 <Button Grid.Column="3" Style="{StaticResource CustomButton}"
                         Command="{Binding Search}"
-                        Margin="2">
+                        Margin="2" IsDefault="True">
                     <Button.Background>
                         <ImageBrush ImageSource="{Binding SearchImage}"/>
                     </Button.Background>
